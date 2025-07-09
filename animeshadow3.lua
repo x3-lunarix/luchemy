@@ -598,16 +598,3 @@ Tabs.Settings:Toggle({
     end
 })
 
-Tabs.Settings:Slider({
-    Title = tr('Jump Power'),
-    Desc = 'Adjust jump height',
-    Image = 'chevron-up',
-    Min = 50,
-    Max = 200,
-    Value = config.JumpPower,
-    Callback = function(v)
-        config.JumpPower = v
-        if config.EnableJump and LocalPlayer.Character then
-            local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                h
