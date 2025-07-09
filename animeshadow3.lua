@@ -3,47 +3,91 @@ warn("Executor: " .. identifyexecutor())
 
 -- Language settings
 isThai = getgenv().thai or false
+isEsan = getgenv().esan or false -- Added Isaan language check
+
 local function tr(text)
-    if not isThai then return text end
-    local translations = {
-        ["Executor: "] = "ตัวรันสคริปต์: ",
-        ["Username: "] = "ชื่อผู้ใช้: ",
-        ["Roblox ID: "] = "รหัส Roblox: ",
-        ["Main"] = "หน้าแรก",
-        ["Settings"] = "การตั้งค่า",
-        ["Monster List"] = "รายชื่อมอนสเตอร์",
-        ["Select Monster"] = "เลือกมอนสเตอร์",
-        ["No monsters found"] = "ไม่พบมอนสเตอร์",
-        ["Select World"] = "เลือกโลก",
-        ["Select World First"] = "กรุณาเลือกโลกก่อน",
-        ["Auto Click"] = "คลิกอัตโนมัติ",
-        ["Fast Autoclicking"] = "คลิกเร็วอัตโนมัติ",
-        ["Auto Attack + Teleport"] = "โจมตีอัตโนมัติพร้อมวาร์ป",
-        ["Teleport and attack automatically"] = "วาร์ปและโจมตีอัตโนมัติ",
-        ["Auto Claim AFK Gifts"] = "รับของขวัญ AFK อัตโนมัติ",
-        ["Claim AFK Gifts Automatically"] = "รับของขวัญเมื่อ AFK อัตโนมัติ",
-        ["Teleport Speed"] = "ความเร็ววาร์ป",
-        ["Lower = faster teleport"] = "ยิ่งน้อย ยิ่งวาร์ปเร็ว",
-        ["Close UI"] = "ปิดเมนู",
-        ["Refresh List"] = "รีเฟรชรายการ",
-        ["Update monster list"] = "อัปเดตรายการมอนสเตอร์",
-        ["Teleport Mode"] = "โหมดวาร์ป",
-        ["Select teleport method"] = "เลือกวิธีการวาร์ป",
-        ["Tween"] = "วาร์ปแบบลื่นไหล",
-        ["Instant"] = "วาร์ปทันที",
-        ["Run Speed"] = "ความเร็ววิ่ง",
-        ["Jump Power"] = "พลังกระโดด",
-        ["Anti-AFK"] = "ป้องกันการถูกเตะ",
-        ["Prevent 20 minute AFK kick"] = "ป้องกันการถูกเตะเมื่อ AFK 20 นาที",
-        ["ESP Selected Monster"] = "แสดงมอนสเตอร์ที่เลือก",
-        ["Show selected monster with lines"] = "แสดงมอนสเตอร์ที่เลือกด้วยเส้น",
-        ["Enable Speed"] = "เปิดใช้งานความเร็ว",
-        ["Toggle run speed modification"] = "เปิด/ปิดการปรับความเร็ววิ่ง",
-        ["Enable Jump"] = "เปิดใช้งานการกระโดด",
-        ["Toggle jump power modification"] = "เปิด/ปิดการปรับพลังกระโดด",
-        ["Default"] = "ค่าเริ่มต้น"
-    }
-    return translations[text] or text
+    if isEsan then
+        local esanTranslations = {
+            ["Executor: "] = "โต๋รันสคริปต์: ",
+            ["Username: "] = "ซื่อผู้ใช้: ",
+            ["Roblox ID: "] = "ไอดี Roblox: ",
+            ["Main"] = "หน้าหลัก",
+            ["Settings"] = "ตั้งค่า",
+            ["Monster List"] = "รายซื่อมอนสเตอร์",
+            ["Select Monster"] = "เลือกมอนสเตอร์",
+            ["No monsters found"] = "บ่เห็นมอนสเตอร์",
+            ["Select World"] = "เลือกโลก",
+            ["Select World First"] = "โปรดเลือกโลกก่อน",
+            ["Auto Click"] = "คลิกออโต้",
+            ["Fast Autoclicking"] = "คลิกเร็วออโต้",
+            ["Auto Attack + Teleport"] = "ตีออโต้ + วาร์ป",
+            ["Teleport and attack automatically"] = "วาร์ปแล้วตีออโต้",
+            ["Auto Claim AFK Gifts"] = "เก็บของขวัญ AFK ออโต้",
+            ["Claim AFK Gifts Automatically"] = "เก็บของขวัญตอน AFK ออโต้",
+            ["Teleport Speed"] = "ความเร็ววาร์ป",
+            ["Lower = faster teleport"] = "ค่าน้อย วาร์ปไว",
+            ["Close UI"] = "ปิดเมนู",
+            ["Refresh List"] = "รีเฟรชรายการ",
+            ["Update monster list"] = "อัปเดตรายซื่อมอนสเตอร์",
+            ["Teleport Mode"] = "โหมดวาร์ป",
+            ["Select teleport method"] = "เลือกวิธีวาร์ป",
+            ["Tween"] = "วาร์ปลื่นๆ",
+            ["Instant"] = "วาร์ปปุ๊บปั๊บ",
+            ["Run Speed"] = "ความเร็วแล่น",
+            ["Jump Power"] = "พลังกระโดด",
+            ["Anti-AFK"] = "กัน AFK",
+            ["Prevent 20 minute AFK kick"] = "กันถึกเตะตอน AFK 20 นาที",
+            ["ESP Selected Monster"] = "แสดงมอนสเตอร์ที่เลือก",
+            ["Show selected monster with lines"] = "แสดงมอนสเตอร์ที่เลือกด้วยเส้น",
+            ["Enable Speed"] = "เปิดความเร็ว",
+            ["Toggle run speed modification"] = "เปิด/ปิดปรับความเร็วแล่น",
+            ["Enable Jump"] = "เปิดกระโดด",
+            ["Toggle jump power modification"] = "เปิด/ปิดปรับพลังกระโดด",
+            ["Default"] = "ค่าปกติ"
+        }
+        return esanTranslations[text] or text
+    elseif isThai then
+        local thaiTranslations = {
+            ["Executor: "] = "ตัวรันสคริปต์: ",
+            ["Username: "] = "ชื่อผู้ใช้: ",
+            ["Roblox ID: "] = "รหัส Roblox: ",
+            ["Main"] = "หน้าแรก",
+            ["Settings"] = "การตั้งค่า",
+            ["Monster List"] = "รายชื่อมอนสเตอร์",
+            ["Select Monster"] = "เลือกมอนสเตอร์",
+            ["No monsters found"] = "ไม่พบมอนสเตอร์",
+            ["Select World"] = "เลือกโลก",
+            ["Select World First"] = "กรุณาเลือกโลกก่อน",
+            ["Auto Click"] = "คลิกอัตโนมัติ",
+            ["Fast Autoclicking"] = "คลิกเร็วอัตโนมัติ",
+            ["Auto Attack + Teleport"] = "โจมตีอัตโนมัติพร้อมวาร์ป",
+            ["Teleport and attack automatically"] = "วาร์ปและโจมตีอัตโนมัติ",
+            ["Auto Claim AFK Gifts"] = "รับของขวัญ AFK อัตโนมัติ",
+            ["Claim AFK Gifts Automatically"] = "รับของขวัญเมื่อ AFK อัตโนมัติ",
+            ["Teleport Speed"] = "ความเร็ววาร์ป",
+            ["Lower = faster teleport"] = "ยิ่งน้อย ยิ่งวาร์ปเร็ว",
+            ["Close UI"] = "ปิดเมนู",
+            ["Refresh List"] = "รีเฟรชรายการ",
+            ["Update monster list"] = "อัปเดตรายการมอนสเตอร์",
+            ["Teleport Mode"] = "โหมดวาร์ป",
+            ["Select teleport method"] = "เลือกวิธีการวาร์ป",
+            ["Tween"] = "วาร์ปแบบลื่นไหล",
+            ["Instant"] = "วาร์ปทันที",
+            ["Run Speed"] = "ความเร็ววิ่ง",
+            ["Jump Power"] = "พลังกระโดด",
+            ["Anti-AFK"] = "ป้องกันการถูกเตะ",
+            ["Prevent 20 minute AFK kick"] = "ป้องกันการถูกเตะเมื่อ AFK 20 นาที",
+            ["ESP Selected Monster"] = "แสดงมอนสเตอร์ที่เลือก",
+            ["Show selected monster with lines"] = "แสดงมอนสเตอร์ที่เลือกด้วยเส้น",
+            ["Enable Speed"] = "เปิดใช้งานความเร็ว",
+            ["Toggle run speed modification"] = "เปิด/ปิดการปรับความเร็ววิ่ง",
+            ["Enable Jump"] = "เปิดใช้งานการกระโดด",
+            ["Toggle jump power modification"] = "เปิด/ปิดการปรับพลังกระโดด",
+            ["Default"] = "ค่าเริ่มต้น"
+        }
+        return thaiTranslations[text] or text
+    end
+    return text
 end
 
 -- Player information
@@ -120,16 +164,16 @@ local function DisableNoClip()
     if LocalPlayer.Character then
         for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
             if part:IsA("BasePart") then part.CanCollide = true end
+            end
         end
     end
-end
 
 local function TeleportToTarget(targetCFrame)
     local character = LocalPlayer.Character
     if not character then return end
     local hrp = character:FindFirstChild("HumanoidRootPart")
     if not hrp then return end
-    
+
     if config.TeleportMode == "Instant" then
         EnableNoClip()
         hrp.CFrame = targetCFrame
@@ -150,11 +194,11 @@ local function GetNearestMonster()
     if not character then return nil end
     local hrp = character:FindFirstChild("HumanoidRootPart")
     if not hrp then return nil end
-    
+
     local success, enemiesFolder = pcall(function()
         return Workspace:FindFirstChild("Server"):FindFirstChild("Enemies"):FindFirstChild(config.SelectedWorld)
     end)
-    
+
     if not success or not enemiesFolder then return nil end
 
     local closest, closestDistance = nil, math.huge
@@ -194,17 +238,19 @@ local function AttackMonster()
 end
 
 -- Monster List Functions
+local MonsterList -- Declare MonsterList here so it's accessible globally
+
 local function UpdateMonsterList()
     if config.SelectedWorld then
         local success, enemiesFolder = pcall(function()
             return Workspace:WaitForChild("Server"):WaitForChild("Enemies"):WaitForChild(config.SelectedWorld)
         end)
-        
+
         if success and enemiesFolder then
             pcall(function()
                 MonsterList:Clear()
             end)
-            
+
             local uniqueNames = {}
             for _, enemy in ipairs(enemiesFolder:GetChildren()) do
                 if not uniqueNames[enemy.Name] then
@@ -212,7 +258,7 @@ local function UpdateMonsterList()
                     uniqueNames[enemy.Name] = true
                 end
             end
-            
+
             if not next(uniqueNames) then
                 MonsterList:Add(tr("No monsters found"))
             end
@@ -303,11 +349,11 @@ local function SetupCharacterMovement()
     if connections.Character then connections.Character:Disconnect() end
     connections.Character = LocalPlayer.CharacterAdded:Connect(function(character)
         local humanoid = character:WaitForChild("Humanoid")
-        
+
         -- Store default values
         config.DefaultWalkSpeed = humanoid.WalkSpeed
         config.DefaultJumpPower = humanoid.JumpPower
-        
+
         humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
             if config.EnableSpeed then
                 humanoid.WalkSpeed = config.RunSpeed
@@ -315,7 +361,7 @@ local function SetupCharacterMovement()
                 humanoid.WalkSpeed = config.DefaultWalkSpeed
             end
         end)
-        
+
         humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
             if config.EnableJump then
                 humanoid.JumpPower = config.JumpPower
@@ -323,34 +369,34 @@ local function SetupCharacterMovement()
                 humanoid.JumpPower = config.DefaultJumpPower
             end
         end)
-        
+
         -- Apply initial values
         if config.EnableSpeed then
             humanoid.WalkSpeed = config.RunSpeed
         else
             humanoid.WalkSpeed = config.DefaultWalkSpeed
         end
-        
+
         if config.EnableJump then
             humanoid.JumpPower = config.JumpPower
         else
             humanoid.JumpPower = config.DefaultJumpPower
         end
     end)
-    
+
     if LocalPlayer.Character then
         local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
         if humanoid then
             -- Store default values
             config.DefaultWalkSpeed = humanoid.WalkSpeed
             config.DefaultJumpPower = humanoid.JumpPower
-            
+
             if config.EnableSpeed then
                 humanoid.WalkSpeed = config.RunSpeed
             else
                 humanoid.WalkSpeed = config.DefaultWalkSpeed
             end
-            
+
             if config.EnableJump then
                 humanoid.JumpPower = config.JumpPower
             else
@@ -383,13 +429,17 @@ local Tabs = {
     Settings = Window:Tab({Title = tr('Settings'), Icon = 'settings', Compact = true}),
 }
 
--- Main Tab
-local MonsterList = Tabs.Main:Dropdown({
+---
+
+## Main Tab
+
+-- Monster List Dropdown - MonsterList is assigned here
+MonsterList = Tabs.Main:Dropdown({
     Title = tr('Monster List'),
     Desc = tr('Select Monster'),
     Image = 'chevron-down',
     List = {},
-    Value = tr('Select World First'),
+    Value = tr('Select World First'), -- Set initial value for user guidance
     Callback = function(v)
         if v ~= tr("No monsters found") and v ~= tr("Select World First") then
             config.SelectedMonster = v
@@ -408,8 +458,8 @@ local WorldDropdown = Tabs.Main:Dropdown({
     Value = nil,
     Callback = function(v)
         config.SelectedWorld = v
-        config.SelectedMonster = nil
-        UpdateMonsterList()
+        config.SelectedMonster = nil -- Clear selected monster when world changes
+        UpdateMonsterList() -- This will now correctly populate MonsterList
         if config.ESPMonster then
             UpdateESP()
         end
@@ -486,7 +536,10 @@ Tabs.Main:Toggle({
     end,
 })
 
--- Settings Tab (Compact)
+---
+
+## Settings Tab (Compact)
+
 Tabs.Settings:Toggle({
     Title = tr('Enable Speed'),
     Desc = tr('Toggle run speed modification'),
@@ -557,79 +610,4 @@ Tabs.Settings:Slider({
         if config.EnableJump and LocalPlayer.Character then
             local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
-                humanoid.JumpPower = v
-            end
-        end
-    end
-})
-
-Tabs.Settings:Toggle({
-    Title = tr('Anti-AFK'),
-    Desc = tr('Prevent 20 minute AFK kick'),
-    Image = 'toggle-right',
-    Value = false,
-    Callback = function(v)
-        config.AntiAFK = v
-        ToggleAntiAFK(v)
-    end
-})
-
-Tabs.Settings:Toggle({
-    Title = tr('ESP Selected Monster'),
-    Desc = tr('Show selected monster with lines'),
-    Image = 'toggle-right',
-    Value = false,
-    Callback = function(v)
-        config.ESPMonster = v
-        if v then
-            if connections.ESP then connections.ESP:Disconnect() end
-            connections.ESP = RunService.Heartbeat:Connect(function()
-                UpdateESP()
-            end)
-        else
-            if connections.ESP then connections.ESP:Disconnect() end
-            ClearESP()
-        end
-    end
-})
-
-Tabs.Settings:Slider({
-    Title = tr('Teleport Speed'),
-    Desc = tr('Lower = faster teleport'),
-    Image = 'chevron-up',
-    Min = 0.1,
-    Max = 2,
-    Value = 0.5,
-    Callback = function(v)
-        config.TeleportSpeed = v
-    end
-})
-
--- Main loop for auto attack
-spawn(function()
-    while task.wait(0.1) do
-        if config.AutoAttack then
-            xpcall(function()
-                if TeleportToMonster() then
-                    task.wait(0.2)
-                    AttackMonster()
-                end
-            end, function(err)
-                warn("AutoAttack error:", err)
-            end)
-        end
-    end
-end)
-
--- Initialize character movement
-SetupCharacterMovement()
-
--- Cleanup on character removal
-LocalPlayer.CharacterRemoving:Connect(function()
-    for name, connection in pairs(connections) do
-        if name ~= "Character" and connection then
-            connection:Disconnect()
-        end
-    end
-    ClearESP()
-end)
+                h
