@@ -1,12 +1,8 @@
 warn("------- Lumira Hub --------")
 warn("Executor: " .. identifyexecutor())
 
-if getgenv().thai == true then
-    isThai = true
-else 
-    isThai = false
-end
-isThai = getgenv().thai
+-- Language settings
+isThai = getgenv().thai or false
 local function tr(text)
     if not isThai then return text end
     local translations = {
@@ -17,10 +13,9 @@ local function tr(text)
         ["Settings"] = "การตั้งค่า",
         ["Monster List"] = "รายชื่อมอนสเตอร์",
         ["Select Monster"] = "เลือกมอนสเตอร์",
-        ["Select a world first"] = "กรุณาเลือกโลกก่อน",
         ["No monsters found"] = "ไม่พบมอนสเตอร์",
         ["Select World"] = "เลือกโลก",
-        ["Select World Before Selecting Monster"] = "เลือกโลกก่อนเลือกมอนสเตอร์",
+        ["Select World First"] = "กรุณาเลือกโลกก่อน",
         ["Auto Click"] = "คลิกอัตโนมัติ",
         ["Fast Autoclicking"] = "คลิกเร็วอัตโนมัติ",
         ["Auto Attack + Teleport"] = "โจมตีอัตโนมัติพร้อมวาร์ป",
@@ -29,7 +24,13 @@ local function tr(text)
         ["Claim AFK Gifts Automatically"] = "รับของขวัญเมื่อ AFK อัตโนมัติ",
         ["Teleport Speed"] = "ความเร็ววาร์ป",
         ["Lower = faster teleport"] = "ยิ่งน้อย ยิ่งวาร์ปเร็ว",
-        ["Close UI"] = "ปิดเมนู"
+        ["Close UI"] = "ปิดเมนู",
+        ["Refresh List"] = "รีเฟรชรายการ",
+        ["Update monster list"] = "อัปเดตรายการมอนสเตอร์",
+        ["Teleport Mode"] = "โหมดวาร์ป",
+        ["Select teleport method"] = "เลือกวิธีการวาร์ป",
+        ["Tween"] = "วาร์ปแบบลื่นไหล",
+        ["Instant"] = "วาร์ปทันที"
     }
     return translations[text] or text
 end
@@ -49,10 +50,7 @@ local LocalPlayer = Players.LocalPlayer
 local Remotes = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Bridge")
 
 -- Load UI Library
-local Library
-local success, err = pcall(function()
-    Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/x3-lunarix/lunarixhub/refs/heads/main/dummyui.lua"))()
-end)
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/x3-lunarix/lunarixhub/refs/heads/main/dummyui.lua"))()
 
 -- Configurations
 local config = {
@@ -61,7 +59,8 @@ local config = {
     AutoClaimAFK = false,
     SelectedWorld = nil,
     SelectedMonster = nil,
-    TeleportSpeed = 0.5
+    TeleportSpeed = 0.5,
+    TeleportMode = "Tween"
 }
 
 -- UI Setup
@@ -72,7 +71,7 @@ local Window = Library:Window({
     Theme = 'Dark',
     Config = {
         Keybind = Enum.KeyCode.RightControl,
-        Size = UDim2.new(0, 530, 0, 400)
+        Size = UDim2.new(0, 530, 0, 450) -- Increased size for new elements
     },
     CloseUIButton = {
         Enabled = true,
@@ -115,17 +114,24 @@ local function DisableNoClip()
     end
 end
 
-local function TweenTeleport(targetCFrame)
+local function TeleportToTarget(targetCFrame)
     local character = LocalPlayer.Character
     if not character then return end
     local hrp = character:FindFirstChild("HumanoidRootPart")
     if not hrp then return end
-    EnableNoClip()
-    local tween = TweenService:Create(hrp, TweenInfo.new(config.TeleportSpeed, Enum.EasingStyle.Linear), {CFrame = targetCFrame})
-    tween:Play()
-    tween.Completed:Connect(function()
+    
+    if config.TeleportMode == "Instant" then
+        EnableNoClip()
+        hrp.CFrame = targetCFrame
         DisableNoClip()
-    end)
+    else
+        EnableNoClip()
+        local tween = TweenService:Create(hrp, TweenInfo.new(config.TeleportSpeed, Enum.EasingStyle.Linear), {CFrame = targetCFrame})
+        tween:Play()
+        tween.Completed:Connect(function()
+            DisableNoClip()
+        end)
+    end
 end
 
 local function GetNearestMonster()
@@ -134,8 +140,12 @@ local function GetNearestMonster()
     if not character then return nil end
     local hrp = character:FindFirstChild("HumanoidRootPart")
     if not hrp then return nil end
-    local enemiesFolder = Workspace:FindFirstChild("Server"):FindFirstChild("Enemies"):FindFirstChild(config.SelectedWorld)
-    if not enemiesFolder then return nil end
+    
+    local success, enemiesFolder = pcall(function()
+        return Workspace:FindFirstChild("Server"):FindFirstChild("Enemies"):FindFirstChild(config.SelectedWorld)
+    end)
+    
+    if not success or not enemiesFolder then return nil end
 
     local closest, closestDistance = nil, math.huge
     for _, enemy in pairs(enemiesFolder:GetChildren()) do
@@ -155,7 +165,7 @@ local function TeleportToMonster()
     if not monster then return false end
     local monsterHrp = monster:FindFirstChild("HumanoidRootPart")
     if not monsterHrp then return false end
-    TweenTeleport(monsterHrp.CFrame * CFrame.new(0, 0, 5))
+    TeleportToTarget(monsterHrp.CFrame * CFrame.new(0, 0, 5))
     return true
 end
 
@@ -173,62 +183,85 @@ local function AttackMonster()
     return true
 end
 
-local function UpdateMonsterList()
-    if config.SelectedWorld then
-        local success, enemiesFolder = pcall(function()
-            return Workspace:FindFirstChild("Server"):FindFirstChild("Enemies"):FindFirstChild(config.SelectedWorld)
-        end)
-        if success and enemiesFolder then
-            local uniqueNames = {}
-            local enemyList = {}
-            
-            for _, enemy in pairs(enemiesFolder:GetChildren()) do
-                if not uniqueNames[enemy.Name] then
-                    table.insert(enemyList, enemy.Name)
-                    uniqueNames[enemy.Name] = true
-                end
-            end
-            
-            if #enemyList > 0 then
-                MonsterList:Refresh(enemyList, true)
-            else
-                MonsterList:Refresh({tr("No monsters found")}, false)
-            end
-            return true
-        else
-            MonsterList:Refresh({tr("No monsters found")}, false)
-        end
-    else
-        MonsterList:Refresh({tr("Select a world first")}, false)
-    end
-    return false
-end
-
--- Create MonsterList dropdown before using it
-MonsterList = Tabs.Main:Dropdown({
+-- UI Elements
+local MonsterList = Tabs.Main:Dropdown({
     Title = tr('Monster List'),
     Desc = tr('Select Monster'),
     Image = 'chevron-down',
-    List = {tr("Select a world first")},
-    Value = tr('Select Monster'),
+    List = {tr("Select World First")},
+    Value = '',
     Callback = function(v)
-        if v ~= tr("Select a world first") and v ~= tr("No monsters found") then
+        if v ~= tr("No monsters found") and v ~= tr("Select World First") and v ~= '' then
             config.SelectedMonster = v
         end
     end,
 })
 
-Tabs.Main:Dropdown({
+local function UpdateMonsterList()
+    if not config.SelectedWorld then
+        MonsterList:Clear()
+        MonsterList:SetList({tr("Select World First")})
+        return
+    end
+
+    local success, enemiesFolder = pcall(function()
+        return Workspace:FindFirstChild("Server"):FindFirstChild("Enemies"):FindFirstChild(config.SelectedWorld)
+    end)
+
+    if not success or not enemiesFolder then
+        MonsterList:Clear()
+        MonsterList:SetList({tr("No monsters found")})
+        return
+    end
+
+    local uniqueNames = {}
+    local enemyList = {}
+    
+    for _, enemy in pairs(enemiesFolder:GetChildren()) do
+        if not uniqueNames[enemy.Name] then
+            table.insert(enemyList, enemy.Name)
+            uniqueNames[enemy.Name] = true
+        end
+    end
+    
+    if #enemyList > 0 then
+        MonsterList:Clear()
+        MonsterList:SetList(enemyList)
+    else
+        MonsterList:Clear()
+        MonsterList:SetList({tr("No monsters found")})
+    end
+end
+
+Tabs.Main:Button({
+    Title = tr('Refresh List'),
+    Desc = tr('Update monster list'),
+    Image = 'refresh-ccw',
+    Callback = UpdateMonsterList
+})
+
+local WorldDropdown = Tabs.Main:Dropdown({
     Title = tr('Select World'),
-    Desc = tr('Select World Before Selecting Monster'),
-    Image = 'chevron-down',
+    Desc = tr('Select World First'),
+    Image = 'globe',
     List = {"Shadow City", "Dragon World", "Slayer Island", "Marine Island", "Ninja Village", "Bleach Island"},
     Value = nil,
     Callback = function(v)
         config.SelectedWorld = v
-        config.SelectedMonster = nil -- Reset selected monster when world changes
+        config.SelectedMonster = nil
         UpdateMonsterList()
     end,
+})
+
+Tabs.Main:Dropdown({
+    Title = tr('Teleport Mode'),
+    Desc = tr('Select teleport method'),
+    Image = 'move',
+    List = {tr("Tween"), tr("Instant")},
+    Value = tr("Tween"),
+    Callback = function(v)
+        config.TeleportMode = v == tr("Tween") and "Tween" or "Instant"
+    end
 })
 
 Tabs.Main:Toggle({
@@ -295,13 +328,15 @@ Tabs.Settings:Slider({
     end
 })
 
+-- Main loop for auto attack
 spawn(function()
     while task.wait(0.1) do
         if config.AutoAttack then
             xpcall(function()
-                TeleportToMonster()
-                task.wait(0.2)
-                AttackMonster()
+                if TeleportToMonster() then
+                    task.wait(0.2)
+                    AttackMonster()
+                end
             end, function(err)
                 warn("AutoAttack error:", err)
             end)
@@ -309,7 +344,8 @@ spawn(function()
     end
 end)
 
-game:GetService("Players").LocalPlayer.CharacterRemoving:Connect(function()
+-- Cleanup on character removal
+LocalPlayer.CharacterRemoving:Connect(function()
     for _, connection in pairs(connections) do
         if connection then
             connection:Disconnect()
