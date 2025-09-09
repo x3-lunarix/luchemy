@@ -6174,4 +6174,5 @@ return {
         AttackModule.Delay = d
         AttackModule.NormalDelay = d
     end
+
 }
