@@ -1778,7 +1778,7 @@ function BringMonster(TargetName, TargetCFrame)
     pcall(sethiddenproperty, game.Players.LocalPlayer, "SimulationRadius", math.huge)
 end
 
-bringfrec = 200
+bringfrec = 2
 local WeaponList = {"Melee","Blox Fruit","Sword","Gun"}
 SelectWeaponFarm = "Melee"
 
@@ -6176,3 +6176,4 @@ return {
     end
 
 }
+
