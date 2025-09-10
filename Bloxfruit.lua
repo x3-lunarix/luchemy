@@ -1738,3 +1738,12 @@ local Section1 = Settings:Section({
 	Title = "Setting",
 	Side = 'r'
 })
+
+Section:Keybind({
+	Title = "Keybind",
+	Key = Enum.KeyCode.RightControl,
+	Value = false,
+	Callback = function(key, value)
+		print(key, value)
+	end
+})
